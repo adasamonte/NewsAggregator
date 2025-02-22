@@ -217,6 +217,12 @@ mysqli_close($conn);
                     <p><strong>Published on:</strong> <?php echo date("F j, Y, g:i a", strtotime($article["published_at"])); ?></p>
                     <p><?php echo htmlspecialchars($article["description"]); ?></p>
                     <a href="<?php echo htmlspecialchars($article["url"]); ?>" target="_blank" class="btn btn-primary">Read More</a>
+                    
+                    
+                    <form method="POST" action="unsave_article.php" class="d-inline">
+                        <input type="hidden" name="article_id" value="<?php echo $article['id']; ?>">
+                        <button type="submit" class="btn btn-danger">Unsave</button>
+                    </form>
                 </li>
             <?php endwhile; ?>
         </ul>
