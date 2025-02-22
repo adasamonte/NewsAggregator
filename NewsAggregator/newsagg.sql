@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 22, 2025 at 01:03 AM
+-- Generation Time: Feb 22, 2025 at 01:35 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -48,7 +48,10 @@ INSERT INTO `saved_articles` (`id`, `user_id`, `title`, `url`, `published_at`, `
 (5, 3, 'Elon Musk: agent of chaos', 'https://www.theverge.com/the-vergecast/612923/elon-musk-doge-openai-vergecast', '2025-02-14 14:25:55', 'Itâs hard to think of a time when a single figure has been so central to seemingly everything in the way that Elon Musk is right now. Musk is overseeing and overhauling the federal government, while bending it toward his own financial gain. Heâs also ubiq…'),
 (6, 1, 'Today\'s NYT Connections: Sports Edition Hints and Answers for Feb. 19, #149', 'https://www.cnet.com/tech/gaming/todays-nyt-connections-sports-edition-hints-and-answers-for-feb-19-149/', '2025-02-18 21:00:06', 'Here\'s today\'s Connections: Sports Edition answer and hints for groups. These clues will help you solve The New York Times\' popular puzzle game, Connections: Sports Edition, every day.'),
 (7, 1, 'Paramount and YouTube TV finalize deal keeping CBS, CBS Sports available', 'https://www.androidcentral.com/streaming-tv/paramount-and-youtube-tv-finalize-deal-keeping-cbs-cbs-sports-available', '2025-02-17 18:47:59', 'YouTube and Paramount were struggling to reach \"a fair deal,\" potentially causing all 30+ Paramount channels to disappear. That crisis was avoided.'),
-(8, 1, 'Carbon removal is the next big fossil fuel boom, oil company says', 'https://www.theverge.com/news/616662/carbon-removal-dac-oil-gas-occidental', '2025-02-20 22:33:06', 'Occidental, the oil giant that has tried to fashion itself as a climate tech leader, is being real clear now about capturing carbon dioxide emissions, which it sees as the next big thing for fossil fuel production. That shouldn’t be surprising coming from a p…');
+(8, 1, 'Carbon removal is the next big fossil fuel boom, oil company says', 'https://www.theverge.com/news/616662/carbon-removal-dac-oil-gas-occidental', '2025-02-20 22:33:06', 'Occidental, the oil giant that has tried to fashion itself as a climate tech leader, is being real clear now about capturing carbon dioxide emissions, which it sees as the next big thing for fossil fuel production. That shouldn’t be surprising coming from a p…'),
+(9, 1, 'Pixel phones to gain an important battery feature, tipped by Android 16 beta', 'https://www.androidcentral.com/apps-software/pixel-phones-might-finally-introduce-battery-health-feature-with-android-16', '2025-02-19 20:48:31', 'Google seems to be reintroducing the previously spotted Pixel Battery Health feature with Android 16.'),
+(10, 1, 'OnePlus Watch 3: The Battery King of Smartwatches', 'https://www.wired.com/review/oneplus-watch-3/', '2025-02-18 13:00:00', 'The OnePlus Watch 3 raises the bar, putting Apple, Google, and Samsung to shame with its five-day battery.'),
+(11, 1, 'Today\'s NYT Connections: Sports Edition Hints and Answers for Feb. 19, #149', 'https://www.cnet.com/tech/gaming/todays-nyt-connections-sports-edition-hints-and-answers-for-feb-19-149/', '2025-02-18 21:00:06', 'Here\'s today\'s Connections: Sports Edition answer and hints for groups. These clues will help you solve The New York Times\' popular puzzle game, Connections: Sports Edition, every day.');
 
 -- --------------------------------------------------------
 
@@ -63,16 +66,19 @@ CREATE TABLE `users` (
   `firstname` varchar(50) NOT NULL,
   `lastname` varchar(50) NOT NULL,
   `email` varchar(50) NOT NULL,
-  `password` varchar(50) NOT NULL
+  `password` varchar(50) NOT NULL,
+  `gender` enum('Male','Female','Other') NOT NULL DEFAULT 'Male',
+  `birthday` date DEFAULT NULL,
+  `profile_picture` varchar(255) DEFAULT 'default.png'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`ID`, `is_admin`, `username`, `firstname`, `lastname`, `email`, `password`) VALUES
-(1, 0, 'boggart', 'boggart', 'boga', 'boggart@gmail.com', 'boggart'),
-(3, 0, 'John Marry', 'John', 'Marston', 'john@gmail.com', 'samonte3');
+INSERT INTO `users` (`ID`, `is_admin`, `username`, `firstname`, `lastname`, `email`, `password`, `gender`, `birthday`, `profile_picture`) VALUES
+(1, 0, 'boggart', 'boggart', 'boga', 'boggart@gmail.com', 'boggart', 'Male', '2004-03-03', 'uploads/profile_67b91b2c39f523.86521007.jpg'),
+(3, 0, 'John Marry', 'John', 'Marston', 'john@gmail.com', 'samonte3', 'Male', NULL, 'default.png');
 
 --
 -- Indexes for dumped tables
@@ -99,7 +105,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `saved_articles`
 --
 ALTER TABLE `saved_articles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `users`
