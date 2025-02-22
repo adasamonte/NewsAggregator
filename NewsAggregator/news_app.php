@@ -121,6 +121,15 @@ if ($sort_by === "title_asc") {
             <p><?php echo htmlspecialchars($article["description"]); ?></p>
             <a href="<?php echo htmlspecialchars($article["url"]); ?>" target="_blank">Read more</a>
         </div>
+        <form method="POST" action="save_article.php">
+            <input type="hidden" name="title" value="<?php echo htmlspecialchars($article['title']); ?>">
+            <input type="hidden" name="url" value="<?php echo htmlspecialchars($article['url']); ?>">
+            <input type="hidden" name="published_at" value="<?php echo htmlspecialchars($article['publishedAt']); ?>">
+            <input type="hidden" name="description" value="<?php echo htmlspecialchars($article['description']); ?>">
+            <input type="hidden" name="author" value="<?php echo htmlspecialchars($article['author'] ?? 'Unknown'); ?>">
+            <button type="submit" class="btn btn-success">Save Article</button>
+        </form>
+
         <?php endforeach; ?>
     <?php else: ?>
         <p>No articles found for "<?php echo htmlspecialchars($topic); ?>". Try another topic.</p>
