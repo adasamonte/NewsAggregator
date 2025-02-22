@@ -55,6 +55,77 @@ mysqli_stmt_execute($stmt);
 $articles_result = mysqli_stmt_get_result($stmt);
 
 mysqli_stmt_close($stmt);
+
+
+
+
+// Ensure user is logged in
+
+// Check if user is logged in
+if (!isset($_SESSION["username"])) {
+    header("Location: login.php");
+    exit();
+}
+
+$username = $_SESSION["username"];
+
+// Fetch user details
+$query = "SELECT * FROM users WHERE email = ?";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $username);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+$user = mysqli_fetch_assoc($result);
+
+if (!$user) {
+    die("User not found.");
+}
+
+// Handle profile update
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $firstname = $_POST["firstname"];
+    $lastname = $_POST["lastname"];
+    $gender = $_POST["gender"];
+    $birthday = $_POST["birthday"];
+
+    // Profile picture upload
+    if (!empty($_FILES["profile_picture"]["name"])) {
+        $target_dir = "uploads/";
+
+        // Ensure uploads directory exists
+        if (!is_dir($target_dir)) {
+            mkdir($target_dir, 0777, true);
+        }
+
+        // Generate unique filename
+        $file_extension = pathinfo($_FILES["profile_picture"]["name"], PATHINFO_EXTENSION);
+        $new_filename = uniqid("profile_", true) . "." . $file_extension;
+        $target_file = $target_dir . $new_filename;
+
+        // Move uploaded file
+        if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $target_file)) {
+            $profile_picture = $target_file;
+        } else {
+            echo "<script>alert('File upload failed. Please try again.');</script>";
+            $profile_picture = $user["profile_picture"]; // Keep existing profile picture if upload fails
+        }
+    } else {
+        $profile_picture = $user["profile_picture"];
+    }
+
+    // Update user details
+    $update_query = "UPDATE users SET firstname=?, lastname=?, gender=?, birthday=?, profile_picture=? WHERE email=?";
+    $stmt = mysqli_prepare($conn, $update_query);
+    mysqli_stmt_bind_param($stmt, "ssssss", $firstname, $lastname, $gender, $birthday, $profile_picture, $username);
+    
+    if (mysqli_stmt_execute($stmt)) {
+        echo "<script>alert('Profile updated successfully!'); window.location='profile.php';</script>";
+    } else {
+        echo "<script>alert('Error updating profile!');</script>";
+    }
+}
+
+// Close database connection
 mysqli_close($conn);
 ?>
 
@@ -67,6 +138,53 @@ mysqli_close($conn);
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
 </head>
 <body>
+
+<div class="container mt-5">
+    <h2>Profile</h2>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="text-center">
+                <img src="<?php echo htmlspecialchars($user['profile_picture']); ?>" class="rounded-circle" width="150" height="150">
+            </div>
+
+            <form method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="firstname" class="form-label">First Name</label>
+                    <input type="text" name="firstname" id="firstname" class="form-control" value="<?php echo htmlspecialchars($user['firstname']); ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="lastname" class="form-label">Last Name</label>
+                    <input type="text" name="lastname" id="lastname" class="form-control" value="<?php echo htmlspecialchars($user['lastname']); ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="gender" class="form-label">Gender</label>
+                    <select name="gender" id="gender" class="form-control">
+                        <option value="Male" <?php echo ($user['gender'] == "Male") ? "selected" : ""; ?>>Male</option>
+                        <option value="Female" <?php echo ($user['gender'] == "Female") ? "selected" : ""; ?>>Female</option>
+                        <option value="Other" <?php echo ($user['gender'] == "Other") ? "selected" : ""; ?>>Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="birthday" class="form-label">Birthday</label>
+                    <input type="date" name="birthday" id="birthday" class="form-control" value="<?php echo htmlspecialchars($user['birthday']); ?>" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="profile_picture" class="form-label">Profile Picture</label>
+                    <input type="file" name="profile_picture" id="profile_picture" class="form-control">
+                </div>
+
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+
+            <a href="dashboard.php" class="btn btn-secondary mt-3">Back to Dashboard</a>
+        </div>
+    </div>
+</div>
 
 <div class="container">
     <h2 class="mt-5">Welcome, <?php echo htmlspecialchars($username); ?>!</h2>
@@ -102,6 +220,7 @@ mysqli_close($conn);
                 </li>
             <?php endwhile; ?>
         </ul>
+        
     <?php else: ?>
         <p>No saved articles found.</p>
     <?php endif; ?>
